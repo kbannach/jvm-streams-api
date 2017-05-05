@@ -8,10 +8,6 @@ import entities.Customer;
  */
 public class SampleCustomization {
 
-   public static enum GEN {
-      PRODUCT
-   }
-
    private int                          id;
    private BiConsumer<Customer, Object> fun;
    private Object                       arg;
