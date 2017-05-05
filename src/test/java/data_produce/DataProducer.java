@@ -1,6 +1,5 @@
 package data_produce;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import tests.SampleCustomization;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import entities.Customer;
-import entities.Product;
 
 public class DataProducer {
 
@@ -21,37 +20,25 @@ public class DataProducer {
    }
 
    /**
-    * generates {@code count} customers<br>
-    * first customer has {@code count} products, second - {@code count}-1
-    * products an so on<br>
-    * each product's price = [customer's products count] * 0.1
+    * generates {@code count} customers with no products
     */
    public List<Customer> getTestData(int count) {
-      List<Customer> result = new ArrayList<>();
-
-      for (int i = 0; i < count; i++) {
-         Customer c = new Customer(i, "Customer: " + i);
-         for (int j = count - i; j > 3; j--) {
-            c.addProduct(new Product(j, "Product: " + j, j * 0.1));
-         }
-         result.add(c);
-      }
-      return result;
+      return IntStream.rangeClosed(1, count).mapToObj((i) -> new Customer(i, "Customer: " + i)).collect(Collectors.toList());
    }
 
    /**
-    * @see SampleCustomization
+    * @see PropertyCustomization
     */
-   public List<Customer> getTestData(int count, SampleCustomization... customization) {
+   public List<Customer> getTestData(int count, ICustomization... customization) {
       return processSamples(getTestData(count), Arrays.asList(customization));
    }
 
-   private List<Customer> processSamples(List<Customer> testData, List<SampleCustomization> customization) {
+   private List<Customer> processSamples(List<Customer> testData, List<ICustomization> list) {
       Map<Integer, Customer> map = new HashMap<>();
       Set<Customer> ret = new HashSet<>(testData.size());
 
       // perform customization
-      customization.stream().forEach(s -> {
+      list.stream().forEach(s -> {
          Customer cust = map.get(s.getId());
          cust = s.build(cust != null ? cust : drawOne(testData));
          ret.add(cust);

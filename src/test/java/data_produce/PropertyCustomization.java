@@ -6,7 +6,7 @@ import entities.Customer;
 /**
  * used to customize some of the test data
  */
-public class SampleCustomization {
+public class PropertyCustomization implements ICustomization {
 
    private int                          id;
    private BiConsumer<Customer, Object> fun;
@@ -21,17 +21,19 @@ public class SampleCustomization {
     * @param arg
     *        argument of {@code fun}
     */
-   public SampleCustomization(int id, BiConsumer<Customer, Object> fun, Object arg) {
+   public PropertyCustomization(int id, BiConsumer<Customer, Object> fun, Object arg) {
       this.id = id;
       this.fun = fun;
       this.arg = arg;
    }
 
+   @Override
    public Customer build(Customer cus) {
       fun.accept(cus, arg);
       return cus;
    }
 
+   @Override
    public int getId() {
       return id;
    }

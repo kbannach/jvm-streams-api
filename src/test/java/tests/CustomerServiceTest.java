@@ -1,22 +1,18 @@
 package tests;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import services.CustomerService;
 import services.CustomerServiceInterface;
-import data_produce.CustomerMethodFactory;
+import data_produce.CustomerFunctions;
+import data_produce.CustomerSampleFactory;
 import data_produce.DataProducer;
 import entities.Customer;
 
 public class CustomerServiceTest {
 
    private DataProducer dataProducer = new DataProducer();
-
-   private SampleCustomization sample(int id, BiConsumer<Customer, Object> con, Object param) {
-      return new SampleCustomization(id, con, param);
-   }
 
    @Test
    public void testFindByName() {
@@ -29,22 +25,31 @@ public class CustomerServiceTest {
    }
 
    @Test
-   public void testfindByField() {
+   public void testFindByField() {
       String phoneNo = "123456789";
       CustomerServiceInterface cs = new CustomerService(dataProducer.getTestData(
             10,
-            new SampleCustomization(1, CustomerMethodFactory.setPhoneNo(), phoneNo),
-            new SampleCustomization(2, CustomerMethodFactory.setPhoneNo(), phoneNo)));
+
+            CustomerSampleFactory.getSample(1, CustomerFunctions.setPhoneNo, phoneNo),
+            CustomerSampleFactory.getSample(1, CustomerFunctions.setEmail, "test"),
+            CustomerSampleFactory.getSample(1, CustomerFunctions.setTaxId, "1"),
+
+            CustomerSampleFactory.getSample(2, CustomerFunctions.setPhoneNo, phoneNo),
+            CustomerSampleFactory.getSample(2, CustomerFunctions.setEmail, "test2"),
+            CustomerSampleFactory.getSample(2, CustomerFunctions.setTaxId, "2")
+
+      ));
 
       List<Customer> res = cs.findByField("phoneNo", phoneNo);
 
       Assertions.assertThat(res).isNotNull().hasSize(2);
       Assertions.assertThat(res).allMatch(c -> c.getPhoneNo().equals(phoneNo));
    }
-   /*
-   
-   List<Customer> findByField(String fieldName, Object value);
 
+   /*
+
+   testCustomersWhoBoughtMoreThan
+   
    List<Customer> customersWhoBoughtMoreThan(int number);
    
    List<Customer> customersWhoSpentMoreThan(double price);
