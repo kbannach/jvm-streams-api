@@ -1,4 +1,4 @@
-package tests;
+package data_produce;
 
 import java.util.function.BiConsumer;
 import entities.Customer;
