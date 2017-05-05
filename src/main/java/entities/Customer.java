@@ -1,73 +1,78 @@
 package entities;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Customer {
 
-	private int id;
-	private String name;
-	private String email;
-	private String phoneNo;
-	private String taxId;
+   private int    id;
+   private String name;
+   private String email;
+   private String phoneNo;
+   private String taxId;
 
-	public String getEmail() {
-		return email;
-	}
+   public String getEmail() {
+      return email;
+   }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+   public void setEmail(String email) {
+      this.email = email;
+   }
 
-	public String getPhoneNo() {
-		return phoneNo;
-	}
+   public String getPhoneNo() {
+      return phoneNo;
+   }
 
-	public void setPhoneNo(String phoneNo) {
-		this.phoneNo = phoneNo;
-	}
+   public void setPhoneNo(String phoneNo) {
+      this.phoneNo = phoneNo;
+   }
 
-	public String getTaxId() {
-		return taxId;
-	}
+   public String getTaxId() {
+      return taxId;
+   }
 
-	public void setTaxId(String taxId) {
-		this.taxId = taxId;
-	}
+   public void setTaxId(String taxId) {
+      this.taxId = taxId;
+   }
 
-	private List<Product> boughtProducts;
+   private List<Product> boughtProducts;
 
-	public Customer() {
-		boughtProducts = new ArrayList<>();
-	}
+   public Customer() {
+      boughtProducts = new ArrayList<>();
+   }
 
-	public Customer(int id, String name) {
-		this.id = id;
-		this.name = name;
-		this.boughtProducts = new ArrayList<>();
-	}
+   public Customer(int id, String name) {
+      this.id = id;
+      this.name = name;
+      this.boughtProducts = new ArrayList<>();
+   }
 
-	public int getId() {
-		return id;
-	}
+   public int getId() {
+      return id;
+   }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+   public void setId(int id) {
+      this.id = id;
+   }
 
-	public String getName() {
-		return name;
-	}
+   public String getName() {
+      return name;
+   }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+   public void setName(String name) {
+      this.name = name;
+   }
 
-	public List<Product> getBoughtProducts() {
-		return boughtProducts;
-	}
+   public List<Product> getBoughtProducts() {
+      return boughtProducts;
+   }
 
-	public void addProduct(Product p) {
-		boughtProducts.add(p);
-	}
+   public void addProduct(Product p) {
+      boughtProducts.add(p);
+   }
 
+   @Override
+   public String toString() {
+      return "name=" + name + ";email=" + email + ";phoneNo=" + phoneNo + ";taxId=" + taxId;
+   }
 }
