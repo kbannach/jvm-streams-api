@@ -1,15 +1,17 @@
 package data_produce;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import entities.Customer;
 import entities.Product;
 
 public class ProductsCustomization implements ICustomization {
 
-   private int    id;
-   private int    productsCount;
-   private double totalPrice;
+   private int        id;
+   private int        productsCount;
+   private BigDecimal totalPrice;
 
-   public ProductsCustomization(int id, int productsCount, double totalPrice) {
+   public ProductsCustomization(int id, int productsCount, BigDecimal totalPrice) {
       this.id = id;
       this.productsCount = productsCount;
       this.totalPrice = totalPrice;
@@ -17,18 +19,18 @@ public class ProductsCustomization implements ICustomization {
 
    @Override
    public Customer build(Customer cus) {
-      double limit = totalPrice, gen;
+      BigDecimal gen;
       for (int i = 1; i < productsCount; i++) {
-         gen = GeneratingUtils.generateDoubleInRange(limit);
-         cus.addProduct(new Product(i, buildProductName(cus.getName(), i), gen));
-         totalPrice -= gen;
+         gen = GeneratingUtils.generateDoubleInRange(totalPrice);
+         cus.addProduct(new Product(i, buildProductName(cus.getName(), i), gen.doubleValue()));
+         totalPrice = totalPrice.subtract(gen).setScale(2, RoundingMode.HALF_UP);
       }
-      cus.addProduct(new Product(productsCount, buildProductName(cus.getName(), productsCount), totalPrice));
+      cus.addProduct(new Product(productsCount, buildProductName(cus.getName(), productsCount), totalPrice.doubleValue()));
       return cus;
    }
 
-   private String buildProductName(String cusName, int i) {
-      return "C:" + cusName + ";Product" + i;
+   private String buildProductName(String cusName, int number) {
+      return "C:" + cusName + ";Product" + number;
    }
 
    @Override
