@@ -29,6 +29,7 @@ public class PropertyCustomization implements ICustomization {
 
    @Override
    public Customer build(Customer cus) {
+      cus.setId(id);
       fun.accept(cus, arg);
       return cus;
    }

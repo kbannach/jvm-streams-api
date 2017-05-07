@@ -19,6 +19,7 @@ public class ProductsCustomization implements ICustomization {
 
    @Override
    public Customer build(Customer cus) {
+      cus.setId(id);
       BigDecimal gen;
       for (int i = 1; i < productsCount; i++) {
          gen = GeneratingUtils.generateDoubleInRange(totalPrice);

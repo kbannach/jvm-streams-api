@@ -1,6 +1,7 @@
 package data_produce;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,14 +18,18 @@ public enum DataProducer {
     * generates {@code count} customers with no products
     */
    public static List<Customer> getTestData(int count) {
-      return IntStream.rangeClosed(1, count).mapToObj((i) -> new Customer(i, "Customer" + i)).collect(Collectors.toList());
+      return getTestData(count, false);
+   }
+
+   private static List<Customer> getTestData(int count, boolean internal) {
+      return IntStream.rangeClosed(1, count).mapToObj((i) -> new Customer(internal ? -1 : i, "Customer" + i)).collect(Collectors.toList());
    }
 
    /**
     * @see PropertyCustomization
     */
    public static List<Customer> getTestData(int count, ICustomization... customization) {
-      return processSamples(getTestData(count), Arrays.asList(customization));
+      return processSamples(getTestData(count, true), Arrays.asList(customization));
    }
 
    private static List<Customer> processSamples(List<Customer> testData, List<ICustomization> list) {
@@ -39,9 +44,14 @@ public enum DataProducer {
          map.put(s.getId(), cust);
       });
 
+      // assign ids to uncustomized objects
+      int id = GeneratingUtils.getMax(map.keySet());
+      for (Customer obj : testData) {
+         obj.setId(++id);
+      }
+
       // copy the rest of the data
       ret.addAll(testData);
       return Arrays.asList(ret.toArray(new Customer[]{}));
    }
-
 }

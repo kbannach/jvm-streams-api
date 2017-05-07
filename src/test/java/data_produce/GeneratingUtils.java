@@ -2,6 +2,7 @@ package data_produce;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -29,5 +30,9 @@ public enum GeneratingUtils {
       BigDecimal tmp = new BigDecimal(rand.nextDouble()).multiply(totalPrice);
       tmp = tmp.setScale(2, RoundingMode.HALF_UP);
       return tmp.add(new BigDecimal(0.1));
+   }
+
+   public static int getMax(Collection<Integer> col) {
+      return col.stream().mapToInt((i) -> i).max().orElse(0);
    }
 }
