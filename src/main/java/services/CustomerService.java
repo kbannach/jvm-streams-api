@@ -58,7 +58,7 @@ public class CustomerService implements CustomerServiceInterface {
 
    @Override
    public double avgOrders(boolean includeEmpty) {
-      return this.customers.stream().filter(c -> (includeEmpty ? true : !c.getBoughtProducts().isEmpty())).flatMap(c -> c.getBoughtProducts().stream()).mapToDouble(Product::getPrice).sum()
+      return this.customers.stream().flatMap(c -> c.getBoughtProducts().stream()).mapToDouble(Product::getPrice).sum()
             / this.customers.stream().filter(c -> (includeEmpty ? true : !c.getBoughtProducts().isEmpty())).count();
    }
 
