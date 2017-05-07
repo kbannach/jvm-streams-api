@@ -1,6 +1,7 @@
 package data_produce;
 
 import entities.Customer;
+import entities.Product;
 
 public class ProductsCustomization implements ICustomization {
 
@@ -16,13 +17,22 @@ public class ProductsCustomization implements ICustomization {
 
    @Override
    public Customer build(Customer cus) {
-      // TODO Auto-generated method stub
+      double limit = totalPrice, gen;
+      for (int i = 1; i < productsCount; i++) {
+         gen = GeneratingUtils.generateDoubleInRange(limit);
+         cus.addProduct(new Product(i, buildProductName(cus.getName(), i), gen));
+         totalPrice -= gen;
+      }
+      cus.addProduct(new Product(productsCount, buildProductName(cus.getName(), productsCount), totalPrice));
       return cus;
+   }
+
+   private String buildProductName(String cusName, int i) {
+      return "C:" + cusName + ";Product" + i;
    }
 
    @Override
    public int getId() {
       return id;
    }
-
 }
