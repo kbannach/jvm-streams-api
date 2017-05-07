@@ -28,7 +28,7 @@ public enum GeneratingUtils {
     */
    public static double generateDoubleInRange(double limit) {
       BigDecimal tmp = new BigDecimal(rand.nextDouble() * limit);
-      tmp.setScale(2, RoundingMode.HALF_UP);
+      tmp = tmp.setScale(2, RoundingMode.HALF_UP);
       return tmp.doubleValue() + 0.1;
    }
 }
