@@ -1,6 +1,7 @@
 package tests;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import data_produce.CustomerFunctions;
 import data_produce.CustomerSampleFactory;
 import data_produce.DataProducer;
 import entities.Customer;
+import entities.Product;
 
 public class CustomerServiceTest {
 
@@ -24,7 +26,7 @@ public class CustomerServiceTest {
    }
 
    @Test
-   public void testFindByField() {
+   public void testFindByFieldPhoneNo() {
       String phoneNo = "123456789";
       CustomerServiceInterface cs = new CustomerService(DataProducer.getTestData(
             10,
@@ -35,6 +37,37 @@ public class CustomerServiceTest {
 
       Assertions.assertThat(res).isNotNull().hasSize(2);
       Assertions.assertThat(res).allMatch(c -> c.getPhoneNo().equals(phoneNo));
+   }
+
+   @Test
+   public void testFindByFieldEmail() {
+      String email = "foo@bar.org";
+      CustomerServiceInterface cs = new CustomerService(DataProducer.getTestData(
+            10,
+            CustomerSampleFactory.getSample(1, CustomerFunctions.setEmail, email),
+            CustomerSampleFactory.getSample(2, CustomerFunctions.setEmail, "testtest"),
+            CustomerSampleFactory.getSample(3, CustomerFunctions.setEmail, email)));
+
+      List<Customer> res = cs.findByField("email", email);
+
+      Assertions.assertThat(res).isNotNull().hasSize(2);
+      Assertions.assertThat(res).allMatch(c -> c.getEmail().equals(email));
+   }
+
+   @Test
+   public void testFindByFieldTaxId() {
+      String taxId = "testTaxId";
+      CustomerServiceInterface cs = new CustomerService(DataProducer.getTestData(
+            10,
+            CustomerSampleFactory.getSample(1, CustomerFunctions.setTaxId, taxId),
+            CustomerSampleFactory.getSample(2, CustomerFunctions.setTaxId, taxId),
+            CustomerSampleFactory.getSample(2, CustomerFunctions.setEmail, "testEmail"),
+            CustomerSampleFactory.getSample(3, CustomerFunctions.setTaxId, "nvkadsl")));
+
+      List<Customer> res = cs.findByField("taxId", taxId);
+
+      Assertions.assertThat(res).isNotNull().hasSize(2);
+      Assertions.assertThat(res).allMatch(c -> c.getTaxId().equals(taxId));
    }
 
    @Test
@@ -94,15 +127,70 @@ public class CustomerServiceTest {
       Assertions.assertThat(res).isNotNull().hasSize(3);
       Assertions.assertThat(res.stream().map(c -> c.getId()).collect(Collectors.toList())).contains(2, 4, 5);
    }
+
+   @Test
+   public void testAddProductToAllCustomers() {
+      List<Customer> customers = DataProducer.getTestData(5);
+      CustomerServiceInterface cs = new CustomerService(customers);
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+
+      cs.addProductToAllCustomers(newProduct);
+
+      Assertions.assertThat(customers).allMatch(c -> c.getBoughtProducts().contains(newProduct));
+   }
+
+   @Test
+   public void testAvgOrders() {
+      CustomerServiceInterface cs = new CustomerService(DataProducer.getTestData(
+            5,
+            CustomerSampleFactory.getSample(1, 1, 15),
+            CustomerSampleFactory.getSample(2, 2, 10),
+            CustomerSampleFactory.getSample(3, 1, 12.5),
+            CustomerSampleFactory.getSample(4, 1, 0),
+            CustomerSampleFactory.getSample(5, 0, 0)
+
+      ));
+
+      double res = cs.avgOrders(false);
+      Assertions.assertThat(res).isEqualByComparingTo(37.5 / 4);
+
+      res = cs.avgOrders(true);
+      Assertions.assertThat(res).isEqualByComparingTo(37.5 / 5);
+   }
+
+   @Test
+   public void testWasProductBoughtNone() {
+      List<Customer> customers = DataProducer.getTestData(5);
+      CustomerServiceInterface cs = new CustomerService(customers);
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+
+      Assertions.assertThat(cs.wasProductBought(newProduct)).isFalse();
+   }
+
+   @Test
+   public void testWasProductBoughtAll() {
+      List<Customer> customers = DataProducer.getTestData(5);
+      CustomerServiceInterface cs = new CustomerService(customers);
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+
+      cs.addProductToAllCustomers(newProduct);
+
+      Assertions.assertThat(cs.wasProductBought(newProduct)).isTrue();
+   }
+
+   @Test
+   public void testWasProductBoughtOne() {
+      List<Customer> customers = DataProducer.getTestData(5);
+      CustomerServiceInterface cs = new CustomerService(customers);
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+
+      customers.get(new Random().nextInt(customers.size())).getBoughtProducts().add(newProduct);
+
+      Assertions.assertThat(cs.wasProductBought(newProduct)).isTrue();
+   }
    /*
    
-   List<Customer> ();
-   
-   void addProductToAllCustomers(Product p);
-   
-   double avgOrders(boolean includeEmpty);
-   
-   boolean wasProductBought(Product p);
+   boolean (Product p);
    
    List<Product> mostPopularProduct();
    
