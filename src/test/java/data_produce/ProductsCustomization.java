@@ -26,7 +26,9 @@ public class ProductsCustomization implements ICustomization {
          cus.addProduct(new Product(i, buildProductName(cus.getName(), i), gen.doubleValue()));
          totalPrice = totalPrice.subtract(gen).setScale(2, RoundingMode.HALF_UP);
       }
-      cus.addProduct(new Product(productsCount, buildProductName(cus.getName(), productsCount), totalPrice.doubleValue()));
+      if (productsCount != 0) {
+         cus.addProduct(new Product(productsCount, buildProductName(cus.getName(), productsCount), totalPrice.doubleValue()));
+      }
       return cus;
    }
 
