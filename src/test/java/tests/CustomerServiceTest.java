@@ -12,11 +12,9 @@ import entities.Customer;
 
 public class CustomerServiceTest {
 
-   private DataProducer dataProducer = new DataProducer();
-
    @Test
    public void testFindByName() {
-      CustomerServiceInterface cs = new CustomerService(dataProducer.getTestData(10));
+      CustomerServiceInterface cs = new CustomerService(DataProducer.getTestData(10));
 
       String name = "Customer: 1";
       List<Customer> res = cs.findByName(name);
@@ -27,25 +25,16 @@ public class CustomerServiceTest {
    @Test
    public void testFindByField() {
       String phoneNo = "123456789";
-      CustomerServiceInterface cs = new CustomerService(dataProducer.getTestData(
+      CustomerServiceInterface cs = new CustomerService(DataProducer.getTestData(
             10,
-
             CustomerSampleFactory.getSample(1, CustomerFunctions.setPhoneNo, phoneNo),
-            CustomerSampleFactory.getSample(1, CustomerFunctions.setEmail, "test"),
-            CustomerSampleFactory.getSample(1, CustomerFunctions.setTaxId, "1"),
-
-            CustomerSampleFactory.getSample(2, CustomerFunctions.setPhoneNo, phoneNo),
-            CustomerSampleFactory.getSample(2, CustomerFunctions.setEmail, "test2"),
-            CustomerSampleFactory.getSample(2, CustomerFunctions.setTaxId, "2")
-
-      ));
+            CustomerSampleFactory.getSample(2, CustomerFunctions.setPhoneNo, phoneNo)));
 
       List<Customer> res = cs.findByField("phoneNo", phoneNo);
 
       Assertions.assertThat(res).isNotNull().hasSize(2);
       Assertions.assertThat(res).allMatch(c -> c.getPhoneNo().equals(phoneNo));
    }
-
    /*
 
    testCustomersWhoBoughtMoreThan
