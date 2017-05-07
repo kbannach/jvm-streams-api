@@ -23,7 +23,7 @@ public class DataProducer {
     * generates {@code count} customers with no products
     */
    public List<Customer> getTestData(int count) {
-      return IntStream.rangeClosed(1, count).mapToObj((i) -> new Customer(i, "Customer: " + i)).collect(Collectors.toList());
+      return IntStream.rangeClosed(1, count).mapToObj((i) -> new Customer(i, "Customer" + i)).collect(Collectors.toList());
    }
 
    /**
@@ -37,7 +37,7 @@ public class DataProducer {
       Map<Integer, Customer> map = new HashMap<>();
       Set<Customer> ret = new HashSet<>(testData.size());
 
-      // perform customization
+      // perform customization on chosen objects
       list.stream().forEach(s -> {
          Customer cust = map.get(s.getId());
          cust = s.build(cust != null ? cust : drawOne(testData));
