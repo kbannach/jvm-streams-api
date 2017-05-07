@@ -58,8 +58,8 @@ public class CustomerService implements CustomerServiceInterface {
 
    @Override
    public double avgOrders(boolean includeEmpty) {
-      return this.customers.stream().filter(c -> includeEmpty ? true : !c.getBoughtProducts().isEmpty()).mapToDouble(c -> c.getBoughtProducts().stream().mapToDouble(Product::getPrice).sum()).sum()
-            / this.customers.size();
+      return this.customers.stream().filter(c -> (includeEmpty ? true : !c.getBoughtProducts().isEmpty())).flatMap(c -> c.getBoughtProducts().stream()).mapToDouble(Product::getPrice).sum()
+            / this.customers.stream().filter(c -> (includeEmpty ? true : !c.getBoughtProducts().isEmpty())).count();
    }
 
    @Override
@@ -70,8 +70,13 @@ public class CustomerService implements CustomerServiceInterface {
    @Override
    public List<Product> mostPopularProduct() {
       Map<Product, Integer> map = new HashMap<>();
-      this.customers.stream().flatMap(c -> c.getBoughtProducts().stream()).forEach(p -> map.compute(p, (k, v) -> v++));
+      // counts every products' occurence number and stores it in a map
+      this.customers.stream().flatMap(c -> c.getBoughtProducts().stream()).forEach(p -> map.compute(p, (k, v) -> v + 1));
+
+      // gets a max number of occurences
       int max = map.values().stream().max(Integer::compareTo).get();
+
+      // constructs array of most popular products
       List<Product> ret = new ArrayList<>();
       map.forEach((k, v) -> {
          if (v == max)
