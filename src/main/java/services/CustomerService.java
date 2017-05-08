@@ -70,8 +70,8 @@ public class CustomerService implements CustomerServiceInterface {
    @Override
    public List<Product> mostPopularProduct() {
       Map<Product, Integer> map = new HashMap<>();
-      // counts every products' occurence number and stores it in a map
-      this.customers.stream().flatMap(c -> c.getBoughtProducts().stream()).forEach(p -> map.compute(p, (k, v) -> v + 1));
+      // counts every product's occurence number and stores it in a map
+      this.customers.stream().flatMap(c -> c.getBoughtProducts().stream()).forEach(p -> map.compute(p, (k, v) -> v == null ? 1 : v + 1));
 
       // gets a max number of occurences
       int max = map.values().stream().max(Integer::compareTo).get();
