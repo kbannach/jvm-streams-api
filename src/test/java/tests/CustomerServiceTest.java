@@ -3,6 +3,7 @@ package tests;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import services.CustomerService;
@@ -162,20 +163,23 @@ public class CustomerServiceTest {
    public void testWasProductBoughtNone() {
       List<Customer> customers = DataProducer.getTestData(5);
       CustomerServiceInterface cs = new CustomerService(customers);
-      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
 
-      Assertions.assertThat(cs.wasProductBought(newProduct)).isFalse();
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+      boolean ret = cs.wasProductBought(newProduct);
+
+      Assertions.assertThat(ret).isFalse();
    }
 
    @Test
    public void testWasProductBoughtAll() {
       List<Customer> customers = DataProducer.getTestData(5);
       CustomerServiceInterface cs = new CustomerService(customers);
+
       Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
-
       cs.addProductToAllCustomers(newProduct);
+      boolean ret = cs.wasProductBought(newProduct);
 
-      Assertions.assertThat(cs.wasProductBought(newProduct)).isTrue();
+      Assertions.assertThat(ret).isTrue();
    }
 
    @Test
@@ -185,18 +189,52 @@ public class CustomerServiceTest {
       Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
 
       customers.get(new Random().nextInt(customers.size())).getBoughtProducts().add(newProduct);
+      boolean ret = cs.wasProductBought(newProduct);
 
-      Assertions.assertThat(cs.wasProductBought(newProduct)).isTrue();
+      Assertions.assertThat(ret).isTrue();
    }
-   /*
-   
-   boolean (Product p);
-   
-   List<Product> mostPopularProduct();
-   
-   int countBuys(Product p);
-   
-   int countCustomersWhoBought(Product p);
-   
-    */
+
+   @Test
+   public void testMostPopularProduct() {
+      List<Customer> customers = DataProducer.getTestData(10, CustomerSampleFactory.getSample(1, 2, 5), CustomerSampleFactory.getSample(1, 4, 50), CustomerSampleFactory.getSample(1, 1, 13));
+      CustomerServiceInterface cs = new CustomerService(customers);
+
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+      IntStream.range(0, 5).forEach(i -> customers.get(i).addProduct(newProduct));
+      Product newProduct2 = new Product(800, "Terminator", 800);
+      IntStream.range(0, 3).forEach(i -> customers.get(i).addProduct(newProduct2));
+
+      List<Product> ret = cs.mostPopularProduct();
+
+      Assertions.assertThat(ret).isNotNull().hasSize(1).first().isEqualTo(newProduct);
+   }
+
+   @Test
+   public void testCountBuys() {
+      List<Customer> customers = DataProducer.getTestData(10, CustomerSampleFactory.getSample(1, 2, 5), CustomerSampleFactory.getSample(1, 4, 50), CustomerSampleFactory.getSample(1, 1, 13));
+      CustomerServiceInterface cs = new CustomerService(customers);
+
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+      IntStream.range(0, 5).forEach(i -> customers.get(i).addProduct(newProduct));
+      IntStream.range(0, 3).forEach(i -> customers.get(i).addProduct(newProduct));
+
+      int ret = cs.countBuys(newProduct);
+
+      Assertions.assertThat(ret).isEqualTo(8);
+   }
+
+   @Test
+   public void testCountCustomersWhoBought() {
+      List<Customer> customers = DataProducer.getTestData(10, CustomerSampleFactory.getSample(1, 2, 5), CustomerSampleFactory.getSample(1, 4, 50), CustomerSampleFactory.getSample(1, 1, 13));
+      CustomerServiceInterface cs = new CustomerService(customers);
+
+      Product newProduct = new Product(9001, "Over 9000!!!", 9000.1);
+      IntStream.range(0, 5).forEach(i -> customers.get(i).addProduct(newProduct));
+      IntStream.range(0, 3).forEach(i -> customers.get(i).addProduct(newProduct));
+
+      int ret = cs.countCustomersWhoBought(newProduct);
+
+      Assertions.assertThat(ret).isEqualTo(5);
+   }
+
 }
